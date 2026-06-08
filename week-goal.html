@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هدف الأسبوع</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #FAFAF7;
+  font-family: 'Noto Kufi Arabic', sans-serif;
+  min-height: 100vh;
+  padding: 2rem 1rem 4rem;
+  color: #111;
+}
+
+.page { max-width: 480px; margin: 0 auto; }
+
+/* Top */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.title { font-size: 1.5rem; font-weight: 900; }
+.week-label {
+  font-size: 0.72rem;
+  color: #AAA;
+  margin-top: 0.2rem;
+}
+
+.reset-btn {
+  background: none;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  color: #AAA;
+  cursor: pointer;
+}
+.reset-btn:hover { color: #F05; border-color: #F05; }
+
+/* Big goal ring */
+.ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.ring-svg { transform: rotate(-90deg); }
+
+.ring-track { fill: none; stroke: #EEE; stroke-width: 10; }
+.ring-fill  {
+  fill: none;
+  stroke: #111;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+.ring-center {
+  margin-top: -120px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.ring-pct  { font-size: 2.4rem; font-weight: 900; line-height: 1; }
+.ring-sub  { font-size: 0.72rem; color: #AAA; margin-top: 0.2rem; }
+.ring-amt  { font-size: 0.9rem; font-weight: 700; color: #555; margin-top: 0.3rem; direction: ltr; }
+
+/* Goal setter */
+.goal-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F0F0EC;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 2rem;
+}
+
+.goal-row label { font-size: 0.78rem; color: #888; white-space: nowrap; }
+
+.goal-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+  direction: ltr;
+  text-align: right;
+  min-width: 0;
+}
+
+.goal-suffix { font-size: 0.78rem; color: #AAA; }
+
+/* Days */
+.days-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #BBB;
+  margin-bottom: 0.8rem;
+}
+
+.days { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+
+.day-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #FFF;
+  border: 1.5px solid #EBEBEB;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  transition: border-color 0.2s;
+}
+
+.day-row:hover { border-color: #CCC; }
+.day-row.done  { border-color: #111; background: #F8F8F5; }
+
+.day-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  width: 50px;
+  flex-shrink: 0;
+  color: #555;
+}
+
+.day-row.done .day-name { color: #111; }
+
+.day-bar-wrap {
+  flex: 1;
+  background: #F0F0EC;
+  border-radius: 4px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.day-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: #111;
+  transition: width 0.4s ease;
+}
+
+.day-input {
+  background: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #111;
+  direction: ltr;
+  text-align: right;
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.day-input::placeholder { color: #CCC; font-weight: 400; }
+
+.day-check {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid #DDD;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  color: transparent;
+}
+
+.day-check:hover { border-color: #111; }
+.day-row.done .day-check { background: #111; border-color: #111; color: #FFF; }
+
+/* Bottom stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 0.5rem;
+}
+
+.stat {
+  background: #FFF;
+  border: 1.5px solid #EBEBEB;
+  border-radius: 12px;
+  padding: 0.9rem;
+  text-align: center;
+}
+
+.stat-val { font-size: 1rem; font-weight: 900; margin-bottom: 0.2rem; direction: ltr; }
+.stat-lbl { font-size: 0.65rem; color: #AAA; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="top">
+    <div>
+      <div class="title">هدف الأسبوع 🎯</div>
+      <div class="week-label" id="weekLabel"></div>
+    </div>
+    <button class="reset-btn" onclick="resetWeek()">إعادة تعيين</button>
+  </div>
+
+  <!-- Ring -->
+  <div class="ring-wrap">
+    <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
+      <circle class="ring-track" cx="80" cy="80" r="65"/>
+      <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="65"
+        stroke-dasharray="408.41"
+        stroke-dashoffset="408.41"/>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-pct" id="ringPct">0%</div>
+      <div class="ring-sub">من الهدف الأسبوعي</div>
+      <div class="ring-amt" id="ringAmt">$0 / $0</div>
+    </div>
+  </div>
+
+  <!-- Goal -->
+  <div class="goal-row">
+    <label>الهدف الأسبوعي</label>
+    <input class="goal-input" type="number" id="weekGoal" value="1000" min="1" oninput="update()">
+    <span class="goal-suffix">$ / أسبوع</span>
+  </div>
+
+  <!-- Days -->
+  <div class="days-label">أيام الأسبوع</div>
+  <div class="days" id="daysEl"></div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" id="stBest">$0</div>
+      <div class="stat-lbl">أفضل يوم</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stAvg">$0</div>
+      <div class="stat-lbl">المتوسط اليومي</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stLeft">$0</div>
+      <div class="stat-lbl">المتبقي للهدف</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const DAYS = ['السبت','الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'];
+let data = JSON.parse(localStorage.getItem('wg2') || 'null');
+
+if (!data) {
+  data = { amounts: Array(7).fill(''), checked: Array(7).fill(false), goal: 1000 };
+}
+
+// Week label
+const now = new Date();
+const startOfWeek = new Date(now);
+startOfWeek.setDate(now.getDate() - now.getDay());
+const endOfWeek = new Date(startOfWeek);
+endOfWeek.setDate(startOfWeek.getDate() + 6);
+document.getElementById('weekLabel').textContent =
+  startOfWeek.toLocaleDateString('ar-SA', {month:'short',day:'numeric'}) + ' – ' +
+  endOfWeek.toLocaleDateString('ar-SA', {month:'short',day:'numeric', year:'numeric'});
+
+function save() {
+  data.goal = parseFloat(document.getElementById('weekGoal').value) || 1000;
+  localStorage.setItem('wg2', JSON.stringify(data));
+}
+
+function update() {
+  const goal = parseFloat(document.getElementById('weekGoal').value) || 1000;
+  const amounts = data.amounts.map(a => parseFloat(a) || 0);
+  const total = amounts.reduce((s,a) => s+a, 0);
+  const pct = Math.min(Math.round((total/goal)*100), 100);
+  const circ = 408.41;
+
+  document.getElementById('ringPct').textContent = pct + '%';
+  document.getElementById('ringAmt').textContent =
+    '$' + total.toLocaleString('en-US',{maximumFractionDigits:0}) + ' / $' +
+    goal.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('ringFill').style.strokeDashoffset = circ - (circ * pct / 100);
+
+  const best = Math.max(...amounts);
+  const daysWithData = amounts.filter(a=>a>0).length;
+  const avg = daysWithData ? total / daysWithData : 0;
+  const left = Math.max(goal - total, 0);
+
+  document.getElementById('stBest').textContent = '$' + best.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('stAvg').textContent  = '$' + Math.round(avg).toLocaleString('en-US');
+  document.getElementById('stLeft').textContent = '$' + left.toLocaleString('en-US',{maximumFractionDigits:0});
+
+  // Update bars
+  DAYS.forEach((_,i) => {
+    const bar = document.getElementById('bar'+i);
+    const row = document.getElementById('row'+i);
+    if (!bar || !row) return;
+    const a = amounts[i];
+    const barPct = goal > 0 ? Math.min((a / goal) * 100 * 7, 100) : 0;
+    bar.style.width = barPct + '%';
+    row.className = 'day-row' + (data.checked[i] ? ' done' : '');
+    document.getElementById('chk'+i).textContent = data.checked[i] ? '✓' : '';
+  });
+
+  save();
+}
+
+function renderDays() {
+  const el = document.getElementById('daysEl');
+  el.innerHTML = DAYS.map((d,i) => `
+    <div class="day-row${data.checked[i]?' done':''}" id="row${i}">
+      <div class="day-name">${d}</div>
+      <div class="day-bar-wrap">
+        <div class="day-bar" id="bar${i}" style="width:0%"></div>
+      </div>
+      <input class="day-input" type="number" id="inp${i}"
+        placeholder="$0" min="0"
+        value="${data.amounts[i]}"
+        oninput="data.amounts[${i}]=this.value;update()">
+      <div class="day-check" id="chk${i}" onclick="toggle(${i})">${data.checked[i]?'✓':''}</div>
+    </div>
+  `).join('');
+}
+
+function toggle(i) {
+  data.checked[i] = !data.checked[i];
+  update();
+}
+
+function resetWeek() {
+  if (confirm('إعادة تعيين الأسبوع؟')) {
+    data = { amounts: Array(7).fill(''), checked: Array(7).fill(false), goal: data.goal };
+    renderDays(); update();
+  }
+}
+
+document.getElementById('weekGoal').value = data.goal || 1000;
+renderDays();
+update();
+</script>
+</body>
+</html>
